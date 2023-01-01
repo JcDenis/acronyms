@@ -63,7 +63,7 @@ dcCore::app()->addBehaviors([
                 'title'     => __('Acronym'),
                 'msg_title' => __('Title?'),
                 'msg_lang'  => __('Lang?'),
-                'icon_url'  => DC_ADMIN_URL . urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+                'icon'  => dcPage::getPF(basename(__DIR__) . '/icon.png'),
             ]) . dcPage::jsModuleLoad(basename(__DIR__) . '/js/post.js');
         } elseif ($editor == 'dcCKEditor') {
             return dcPage::jsJson('editor_acronyms', [

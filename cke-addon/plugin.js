@@ -12,7 +12,7 @@
 			CKEDITOR.dialog.add('acronymDialog', this.path+'dialogs/popup.js');
 
 			editor.ui.addButton("Acronym", {
-				label: dotclear.getData('editor_acronyms').title,
+				label: dotclear.getData('editor_acronyms',false).title,
 				icon: this.path.replace('cke-addon/', '')+'icon.png',
 				command: 'acronymCommand'
 			});

@@ -4,7 +4,7 @@
 {
 	CKEDITOR.dialog.add('acronymDialog', function(editor) {
 		return {
-			title: dotclear.getData('editor_acronyms').title,
+			title: dotclear.getData('editor_acronyms',false).title,
 			minWidth: 400,
 			minHeight: 150,
 			contents: [
@@ -14,7 +14,7 @@
 						{
 							id: 'acronym',
 							type: 'text',
-							label: dotclear.getData('editor_acronyms').title,
+							label: dotclear.getData('editor_acronyms',false).title,
 							validate: CKEDITOR.dialog.validate.notEmpty('Acronym cannot be empty.'),
 							setup: function(element) {
 								this.setValue(element.getText());

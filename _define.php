@@ -25,6 +25,7 @@ $this->registerModule(
             initAcronyms::PERMISSION,
         ]),
         'type'        => 'plugin',
+        'priority'    => 1001, //before dcLegacyEditor
         'support'     => 'http://forum.dotclear.org/viewtopic.php?id=323174',
         'details'     => 'https://github.com/JcDenis/' . basename(__DIR__),
         'repository'  => 'https://raw.githubusercontent.com/JcDenis/' . basename(__DIR__) . '/master/dcstore.xml',

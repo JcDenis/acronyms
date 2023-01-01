@@ -3,12 +3,15 @@
 
 jsToolBar.prototype.elements.acronyms = {
 	type: 'button',
-	title: dotclear.getData('editor_acronyms').title,
-	msg_title: dotclear.getData('editor_acronyms').msg_title,
-	msg_lang: dotclear.getData('editor_acronyms').msg_lang,
-	icon: dotclear.getData('editor_acronyms').icon_url,
+	title: 'Acronym',
+	msg_title: 'Title?',
+	msg_lang: 'Lang?',
+	icon: '',
 	fn:{}
 };
+
+dotclear.mergeDeep(jsToolBar.prototype.elements.acronyms, dotclear.getData('editor_acronyms'));
+
 jsToolBar.prototype.elements.acronyms.fn.wiki = function() {
 	this.encloseSelection('','',function(str) {
 		if (str == '') { window.alert(dotclear.msg.no_selection); return ''; }
