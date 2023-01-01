@@ -1,4 +1,4 @@
-Acronyms
+# README
 
 [![Release](https://img.shields.io/github/v/release/JcDenis/acronyms)](https://github.com/JcDenis/acronyms/releases)
 [![Date](https://img.shields.io/github/release-date/JcDenis/acronyms)](https://github.com/JcDenis/acronyms/releases)
@@ -7,18 +7,39 @@ Acronyms
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-green.svg)](https://plugins.dotaddict.org/dc2/details/acronyms)
 [![License](https://img.shields.io/github/license/JcDenis/acronyms)](https://github.com/JcDenis/acronyms/blob/master/LICENSE)
 
-========
+## WHAT IS ACRONYMS ?
 
-acronyms est un plugin pour [Dotclear] (http://fr.dotclear.org/).
+_acronyms_ is a plugin for the open-source 
+web publishing software called Dotclear.
 
-Ce plugin ajoute un widget et une page publique.
+It helps to manage acronyms in post editor and
+adds a public page of acronyms list...
 
-Voir [le wiki] (https://github.com/brol/acronyms/wiki) pour plus d'informations.
+## REQUIREMENTS
 
-Auteurs
-=======
-Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux
+ _acronyms_ requires: 
 
-Licence
-=======
-Ce plugin est placé sous la licence [GPL v2] (http://www.gnu.org/licenses/gpl-2.0.html).
+  * Dotclear 2.24
+
+## USAGE
+
+First install _acronyms_, manualy from a zip package or from 
+Dotaddict repository. (See Dotclear's documentation to know how do this)
+
+You can manage acronyms and plugin settings from sidebar menu "Acronyms".
+
+## LINKS
+
+ * License : [GNU GPL v2](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html)
+ * Source & contribution : [GitHub Page](https://github.com/JcDenis/acronyms)
+ * Packages & details:  [Dotaddict Page](https://plugins.dotaddict.org/dc2/details/acronyms)
+ * Discuss and help : [Dotclear Forum](http://forum.dotclear.org/viewtopic.php?id=323174)
+
+## CONTRIBUTORS
+
+ * Vincent Garnier (author)
+ * Pierre Van Glabeke
+ * Bernard Le Roux
+ * Jean-Christian Denis
+
+ You are welcome to contribute to this code.
