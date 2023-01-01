@@ -18,7 +18,7 @@ $this->registerModule(
     'acronyms',
     'Add, remove and modify acronyms for the wiki syntax',
     'Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux',
-    '1.7.7',
+    '1.8',
     [
         'requires'    => [['core', '2.24.1']],
         'permissions' => dcCore::app()->auth->makePermissions([

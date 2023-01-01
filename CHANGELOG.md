@@ -3,7 +3,7 @@ todo
 * use database for acronyms
 * add acronym selector in editor
 
-dev - 2023.01.01
+1.8 - 2023.01.01
 * update to dotclear 2.24
 * use anonymous functions
 * use abstract plugin id
