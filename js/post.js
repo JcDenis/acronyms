@@ -1,9 +1,12 @@
+/*global jsToolBar, dotclear */
+'use strict';
+
 jsToolBar.prototype.elements.acronyms = {
 	type: 'button',
-	title: 'Acronym',
-	msg_title: 'Title?',
-	msg_lang: 'Lang?',
-	icon: 'index.php?pf=acronyms/icon.png',
+	title: dotclear.getData('editor_acronyms').title,
+	msg_title: dotclear.getData('editor_acronyms').msg_title,
+	msg_lang: dotclear.getData('editor_acronyms').msg_lang,
+	icon: dotclear.getData('editor_acronyms').icon_url,
 	fn:{}
 };
 jsToolBar.prototype.elements.acronyms.fn.wiki = function() {

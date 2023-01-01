@@ -1,91 +1,78 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of acronyms, a plugin for DotClear2.
-#
-# Copyright (c) 2008 Vincent Garnier and contributors
-# Licensed under the GPL version 2.0 license.
-# See LICENSE file or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief acronyms, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 if (!defined('DC_CONTEXT_ADMIN')) {
-	return;
+    return null;
 }
 
-require dirname(__FILE__).'/_widgets.php';
+require __DIR__ . '/_widgets.php';
 
-l10n::set(dirname(__FILE__).'/locales/'.$_lang.'/main');
+dcCore::app()->auth->setPermissionType(initAcronyms::PERMISSION, __('manage acronyms'));
 
-$_menu['Blog']->addItem(__('Acronyms Manager'),'plugin.php?p=acronyms','index.php?pf=acronyms/icon.png',
-		preg_match('/plugin.php\?p=acronyms(&.*)?$/',$_SERVER['REQUEST_URI']),
-		$core->auth->check('acronyms',$core->blog->id));
+dcCore::app()->menu[dcAdmin::MENU_BLOG]->addItem(
+    __('Acronyms'),
+    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+    urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([initAcronyms::PERMISSION]), dcCore::app()->blog->id)
+);
 
-$core->auth->setPermissionType('acronyms',__('manage acronyms'));
+dcCore::app()->addBehaviors([
+    'adminDashboardFavoritesV2' => function (dcFavorites $favs) {
+        $favs->register(basename(__DIR__), [
+            'title'       => __('Acronyms'),
+            'url'         => dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+            'small-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+            'large-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon-big.png')),
+            'permissions' => dcCore::app()->auth->makePermissions([initAcronyms::PERMISSION]),
+        ]);
+    },
+    'coreInitWikiPost'          => function ($wiki2xhtml) {
+        dcAcronyms::init();
 
-$core->addBehavior('coreInitWikiPost',array('acronymsAdminBehaviors','coreInitWikiPost'));
-
-$core->addBehavior('adminPostHeaders',array('acronymsAdminBehaviors','jsLoad'));
-$core->addBehavior('adminPageHeaders',array('acronymsAdminBehaviors','jsLoad'));
-$core->addBehavior('adminRelatedHeaders',array('acronymsAdminBehaviors','jsLoad'));
-$core->addBehavior('adminDashboardHeaders',array('acronymsAdminBehaviors','jsLoad'));
-
-$core->addBehavior('ckeditorExtraPlugins', array('acronymsAdminBehaviors', 'ckeditorExtraPlugins'));
-
-class acronymsAdminBehaviors
-{
-	public static function ckeditorExtraPlugins(ArrayObject $extraPlugins, $context)
-	{
-        if ($context!='post') {
+        $wiki2xhtml->setOpt('acronyms_file', dcAcronyms::file());
+        $wiki2xhtml->acro_table = dcAcronyms::read();
+    },
+    'ckeditorExtraPlugins'      => function (ArrayObject $extraPlugins): void {
+        if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('button_enabled')) {
             return;
         }
 
-		$ns = $GLOBALS['core']->blog->settings->addNamespace('acronyms');
-		if ($ns->get('acronyms_button_enabled')) {
-			$extraPlugins[] = array(
-				'name' => 'acronym',
-				'button' => 'Acronym',
-				'url' => DC_ADMIN_URL.'index.php?pf=acronyms/cke-addon/'
-			);
-		}
-	}
+        $extraPlugins[] = [
+            'name'   => 'acronym',
+            'button' => 'Acronym',
+            'url'    => DC_ADMIN_URL . urldecode(dcPage::getPF(basename(__DIR__) . '/cke-addon/plugin.js')),
+        ];
+    },
+    'adminPostEditor'           => function (string $editor = ''): string {
+        if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('button_enabled')) {
+            return '';
+        }
 
-	public static function coreInitWikiPost($wiki2xhtml)
-	{
-		$acronyms = new dcAcronyms($GLOBALS['core']);
+        if ($editor == 'dcLegacyEditor') {
+            return dcPage::jsJson('editor_acronyms', [
+                'title'     => __('Acronym'),
+                'msg_title' => __('Title?'),
+                'msg_lang'  => __('Lang?'),
+                'icon_url'  => DC_ADMIN_URL . urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+            ]) . dcPage::jsModuleLoad(basename(__DIR__) . '/js/post.js');
+        } elseif ($editor == 'dcCKEditor') {
+            return dcPage::jsJson('editor_acronyms', [
+                'title'     => __('Acronym'),
+                'msg_title' => __('Title?'),
+                'msg_lang'  => __('Lang?'),
+            ]);
+        }
 
-		$wiki2xhtml->setOpt('acronyms_file',$acronyms->file);
-		$wiki2xhtml->acro_table = $acronyms->getList();
-	}
-
-	public static function jsLoad()
-	{
-		$ns = $GLOBALS['core']->blog->settings->addNamespace('acronyms');
-		if ($ns->get('acronyms_button_enabled')) {
-			return
-			'<script type="text/javascript" src="index.php?pf=acronyms/post.js"></script>'.
-			'<script type="text/javascript">'."\n".
-			"//<![CDATA[\n".
-			dcPage::jsVar('jsToolBar.prototype.elements.acronyms.title',__('Acronym'))."\n".
-			dcPage::jsVar('jsToolBar.prototype.elements.acronyms.msg_title',__('Title?'))."\n".
-			dcPage::jsVar('jsToolBar.prototype.elements.acronyms.msg_lang',__('Lang?')).
-			"\n//]]>\n".
-			"</script>\n";
-		}
-		return '';
-	}
-
-} # class acronymsAdminBehaviors
-
-$core->addBehavior('adminDashboardFavorites','acronymsDashboardFavorites');
-
-function acronymsDashboardFavorites($core,$favs)
-{
-	$favs->register('acronyms', array(
-		'title' => __('Acronyms'),
-		'url' => 'plugin.php?p=acronyms',
-		'small-icon' => 'index.php?pf=acronyms/icon.png',
-		'large-icon' => 'index.php?pf=acronyms/icon-big.png',
-		'permissions' => 'usage,contentadmin'
-	));
-}
+        return '';
+    },
+]);

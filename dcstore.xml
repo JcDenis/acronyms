@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<modules xmlns:da="http://dotaddict.org/da/">
+  <module id="acronyms">
+    <name>acronyms</name>
+    <version>1.7.7</version>
+    <author>Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux</author>
+    <desc>Add, remove and modify acronyms for the wiki syntax</desc>
+    <file>https://github.com/JcDenis/acronyms/releases/download/v1.7.7/plugin-acronyms.zip</file>
+    <da:dcmin>2.24.1</da:dcmin>
+    <da:details>https://github.com/JcDenis/acronyms</da:details>
+    <da:support>http://forum.dotclear.org/viewtopic.php?id=323174</da:support>
+  </module>
+</modules>

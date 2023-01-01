@@ -1,18 +1,13 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of acronyms, a plugin for DotClear2.
-#
-# Copyright (c) 2008 Vincent Garnier and contributors
-# Licensed under the GPL version 2.0 license.
-# See LICENSE file or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-
-if (!isset($__resources['help']['acronyms']))
-{
-	$__resources['help']['acronyms'] = dirname(__FILE__).'/help/acronyms.html';
-}
-
-?>
+/**
+ * @brief acronyms, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+dcCore::app()->resources['help']['acronyms'] = __DIR__ . '/help/acronyms.html';

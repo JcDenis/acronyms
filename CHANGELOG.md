@@ -1,3 +1,10 @@
+dev - 2023.01.01
+* update to dotclear 2.24
+* use anonymous functions
+* use abstract plugin id
+* fix permissions
+* ! dcLegacyEditor and ckEditor are broken !
+
 v1.7.7 - 16-09-2021 Pierre Van Glabeke
 * champs rallongés
 

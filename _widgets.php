@@ -1,67 +1,58 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of acronyms, a plugin for DotClear2.
-#
-# Copyright (c) 2008 Vincent Garnier and contributors
-# Licensed under the GPL version 2.0 license.
-# See LICENSE file or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-if (!defined('DC_RC_PATH')) { return; }
-
-l10n::set(dirname(__FILE__).'/locales/'.$_lang.'/main');
-
-$ns = $core->blog->settings->addNamespace('acronyms');
-if (!$ns->get('acronyms_public_enabled')) {
-	return;
+/**
+ * @brief acronyms, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_RC_PATH')) {
+    return null;
 }
-unset($ns);
 
-$core->addBehavior('initWidgets',array('widgetsAcronyms','initWidgets'));
+dcCore::app()->addBehavior('initWidgets', ['widgetsAcronyms','initWidgets']);
 
 class widgetsAcronyms
 {
-	# Widget function
-	public static function acronymsWidgets($w)
-	{
-		$core = $GLOBALS['core'];
-		$coreUrl = $core->url;
+    public static function initWidgets($w)
+    {
+        $w->create(
+            'acronyms',
+            __('List of Acronyms'),
+            ['widgetsAcronyms', 'acronymsWidgets'],
+            null,
+            __('Link to the page of acronyms')
+        )
+        ->addTitle(__('List of Acronyms'))
+        ->addHomeOnly()
+        ->addContentOnly()
+        ->addClass()
+        ->addOffline();
+    }
 
-		if ($w->offline)
-			return;
-		
-		if (($w->homeonly == 1 && $core->url->type != 'default') ||
-			($w->homeonly == 2 && $core->url->type == 'default')) {
-			return;
-		}
+    public static function acronymsWidgets($w)
+    {
+        if ($w->offline
+          || !$w->checkHomeOnly(dcCore::app()->url->type)
+          || !dcCore::app()->blog->settings->get(basename(__DIR__))->get('public_enabled')
+        ) {
+            return null;
+        }
 
-		$res =
-		($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '').
-		'<ul><li><a href="'.$core->blog->url.
-		$coreUrl->getBase("acronyms").'">'.	__('List of Acronyms').
-		'</a></li></ul>';
-
-		return $w->renderDiv($w->content_only,'acronyms '.$w->class,'',$res);
-	}
-
-	public static function initWidgets($w) {
-		$w->create('acronyms',__('List of Acronyms'),array('widgetsAcronyms','acronymsWidgets'),
-			null,
-			__('Link to the page of acronyms'));
-		$acro = $w->acronyms;
-		
-		$acro->setting('title',__('Title:'),__('List of Acronyms'),'text');
-		$acro->setting('homeonly',__('Display on:'),0,'combo',
-			array(
-				__('All pages') => 0,
-				__('Home page only') => 1,
-				__('Except on home page') => 2
-				)
-		);
-		$acro->setting('content_only',__('Content only'),0,'check');
-		$acro->setting('class',__('CSS class:'),'');
-		$acro->setting('offline',__('Offline'),0,'check');
-	}
+        return $w->renderDiv(
+            $w->content_only,
+            'acronyms ' . $w->class,
+            '',
+            ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') .
+            sprintf(
+                '<ul><li><a href="%s">%s</a></li></ul>',
+                dcCore::app()->blog->url . dcCore::app()->url->getBase(basename(__DIR__)),
+                __('List of Acronyms')
+            )
+        );
+    }
 }

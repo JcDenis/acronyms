@@ -10,4 +10,14 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-dcCore::app()->resources['help']['acronyms'] = __DIR__ . '/help/acronyms.html';
+if (!defined('DC_RC_PATH')) {
+    return null;
+}
+
+class initAcronyms
+{
+    public const PERMISSION = 'acronyms';
+    public const DIR        = 'acronyms';
+    public const FILE       = 'wiki-acronyms.txt';
+    public const TPL        = 'acronyms.html';
+}

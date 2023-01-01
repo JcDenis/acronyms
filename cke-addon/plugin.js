@@ -1,16 +1,21 @@
-CKEDITOR.plugins.add('acronym', {
-	requires: 'dialog',
-	init: function(editor) {
-		editor.addCommand('acronymCommand',
-				  new CKEDITOR.dialogCommand('acronymDialog', { allowedContent: 'abbr[title,id]' })
-				 );
+/*global dotclear, CKEDITOR */
+'use strict';
 
-		CKEDITOR.dialog.add('acronymDialog', this.path+'dialogs/popup.js');
+{
+	CKEDITOR.plugins.add('acronym', {
+		requires: 'dialog',
+		init: function(editor) {
+			editor.addCommand('acronymCommand',
+					  new CKEDITOR.dialogCommand('acronymDialog', { allowedContent: 'abbr[title,id]' })
+					 );
 
-		editor.ui.addButton("Acronym", {
-			label: jsToolBar.prototype.elements.acronyms.title,
-			icon: this.path.replace('cke-addon/', '')+'icon.png',
-			command: 'acronymCommand'
-		});
-	}
-});
+			CKEDITOR.dialog.add('acronymDialog', this.path+'dialogs/popup.js');
+
+			editor.ui.addButton("Acronym", {
+				label: dotclear.getData('editor_acronyms').title,
+				icon: this.path.replace('cke-addon/', '')+'icon.png',
+				command: 'acronymCommand'
+			});
+		}
+	});
+}

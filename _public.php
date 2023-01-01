@@ -1,107 +1,57 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of acronyms, a plugin for DotClear2.
-#
-# Copyright (c) 2008 Vincent Garnier and contributors
-# Licensed under the GPL version 2.0 license.
-# See LICENSE file or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-if (!defined('DC_RC_PATH')) { 
-	return; 
+/**
+ * @brief acronyms, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Vincent Garnier, Pierre Van Glabeke, Bernard Le Roux
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_RC_PATH')) {
+    return null;
 }
 
-require dirname(__FILE__).'/_widgets.php';
+require __DIR__ . '/_widgets.php';
 
-l10n::set(dirname(__FILE__).'/locales/'.$_lang.'/public');
+if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('public_enabled')) {
+    return null;
+}
 
-$tpl = $core->tpl;
-$tpl->addBlock('Acronyms',array('tplAcronyms','Acronyms'));
-$tpl->addBlock('AcronymsHeader',array('tplAcronyms','AcronymsHeader'));
-$tpl->addBlock('AcronymsFooter',array('tplAcronyms','AcronymsFooter'));
-$tpl->addValue('Acronym',array('tplAcronyms','Acronym'));
-$tpl->addValue('AcronymTitle',array('tplAcronyms','AcronymTitle'));
-$core->addBehavior('publicBreadcrumb',array('extAcronyms','publicBreadcrumb'));
+dcCore::app()->tpl->addBlock('Acronyms', function ($attr, $content) {
+    return
+    "<?php\n" .
+    'dcAcronyms::init(); ' .
+    '$arrayAcronyms = []; ' .
+    'foreach (dcAcronyms::read() as $acronym => $title) {' .
+    "	\$arrayAcronyms[] = ['acronym' => \$acronym, 'title' => \$title];" .
+    '}' .
+    'dcCore::app()->ctx->__set("acronyms", staticRecord::newFromArray($arrayAcronyms)); ' .
+    '?>' .
+    '<?php while (dcCore::app()->ctx->__get("acronyms")->fetch()) : ?>' . $content . '<?php endwhile; ' .
+    'dcCore::app()->ctx->__set("acronyms", null); unset($arrayAcronyms); ?>';
+});
 
-/*******************************************
- * tplAcronyms
- *******************************************/
-class tplAcronyms {
-	public static function Acronyms( $attr, $content) {
-		return
-		"<?php\n".
-		'$objAcronyms = new dcAcronyms($core); '.
-		'$arrayAcronyms = array(); '.
-		'foreach ($objAcronyms->getList() as $acronym=>$title) {'.
-		"	\$arrayAcronyms[] = array('acronym'=>\$acronym,'title'=>\$title);".
-		'}'.
-		'$_ctx->acronyms = staticRecord::newFromArray($arrayAcronyms); '.
-		'?>'.
-		'<?php while ($_ctx->acronyms->fetch()) : ?>'.$content.'<?php endwhile; '.
-		'$_ctx->acronyms = null; unset($objAcronyms,$arrayAcronyms); ?>';
-	}
+dcCore::app()->tpl->addBlock('AcronymsHeader', function ($attr, $content) {
+    return "<?php if (dcCore::app()->ctx->__get('acronyms')->isStart()) : ?>" . $content . '<?php endif; ?>';
+});
 
-	public static function AcronymsHeader( $attr, $content) {
-		return
-		"<?php if (\$_ctx->acronyms->isStart()) : ?>".
-		$content.
-		"<?php endif; ?>";
-	}
+dcCore::app()->tpl->addBlock('AcronymsFooter', function ($attr, $content) {
+    return "<?php if (dcCore::app()->ctx->__get('acronyms')->isEnd()) : ?>" . $content . '<?php endif; ?>';
+});
 
-	public static function AcronymsFooter( $attr, $content) {
-		return
-		"<?php if (\$_ctx->acronyms->isEnd()) : ?>".
-		$content.
-		"<?php endif; ?>";
-	}
+dcCore::app()->tpl->addValue('Acronym', function ($attr) {
+    return '<?php echo ' . sprintf(dcCore::app()->tpl->getFilters($attr), 'dcCore::app()->ctx->__get("acronyms")->__get("acronym")') . '; ?>';
+});
 
-	public static function Acronym( $attr) {
-		return '<?php echo '.
-				sprintf($GLOBALS['core']->tpl->getFilters($attr),'$_ctx->acronyms->acronym').
-				'; ?>';
-	}
+dcCore::app()->tpl->addValue('AcronymTitle', function ($attr) {
+    return '<?php echo ' . sprintf(dcCore::app()->tpl->getFilters($attr), 'dcCore::app()->ctx->__get("acronyms")->__get("title")') . '; ?>';
+});
 
-	public static function AcronymTitle( $attr) {
-		return '<?php echo '.
-				sprintf($GLOBALS['core']->tpl->getFilters($attr),'$_ctx->acronyms->title').
-				'; ?>';
-	}
-
-} 
-/*******************************************
- * acronymsURL
- *******************************************/
-class acronymsURL extends dcUrlHandlers
-{
-        public static function acronyms($args)
-        {
-        	$core = $GLOBALS['core'];
-			$ns = $core->blog->settings->addNamespace('acronyms');
-        	if (!$ns->get('acronyms_public_enabled')) {
-				self::p404();
-				exit;
-        	}
-
-			$tplset = $core->themes->moduleInfo($core->blog->settings->system->theme,'tplset');
-        if (!empty($tplset) && is_dir(dirname(__FILE__).'/default-templates/'.$tplset)) {
-            $core->tpl->setPath($core->tpl->getPath(), dirname(__FILE__).'/default-templates/'.$tplset);
-        } else {
-            $core->tpl->setPath($core->tpl->getPath(), dirname(__FILE__).'/default-templates/'.DC_DEFAULT_TPLSET);
-        }
-			self::serveDocument('acronyms.html');
-			exit;
-        }
-
-} 
-
-class extAcronyms
-{
-  public static function publicBreadcrumb($context,$separator)
-  {
+dcCore::app()->addBehavior('publicBreadcrumb', function ($context, $separator) {
     if ($context == 'acronyms') {
-      return __('List of Acronyms');
+        return __('List of Acronyms');
     }
-  }
-}
+});
