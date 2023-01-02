@@ -36,6 +36,16 @@ dcCore::app()->addBehaviors([
             'permissions' => dcCore::app()->auth->makePermissions([initAcronyms::PERMISSION]),
         ]);
     },
+    'adminSimpleMenuAddType'    => function (ArrayObject $items) {
+        $items[basename(__DIR__)] = new ArrayObject([__('Acronyms'), false]);
+    },
+    'adminSimpleMenuBeforeEdit' => function ($type, $select, &$item) {
+        if (basename(__DIR__) == $type) {
+            $item[0] = __('Acronyms');
+            $item[1] = __('Acronyms list');
+            $item[2] = dcCore::app()->admin->blog_url . dcCore::app()->url->getURLFor(basename(__DIR__));
+        }
+    },
     'coreInitWikiPost'          => function ($wiki2xhtml) {
         dcAcronyms::init();
 

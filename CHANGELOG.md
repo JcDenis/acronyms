@@ -1,7 +1,12 @@
 todo
 * use VAR for acronyms list file
 * use database for acronyms
+* remove currywurst template
+* add dotty template
 * add acronym selector in editor
+
+x.x-dev
+* add item to plugin simple menu
 
 1.8 - 2023.01.01
 * update to dotclear 2.24
